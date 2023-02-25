@@ -1,0 +1,20 @@
+individual - clear submissiondataindividual table
+1. INSERT into submissiondataindividual (SELECT a.name, b.username, b.submissionLink, a.festID, a.aadhaar from users a, submissionlinks b where a.username = b.username and b.eventID = 'nritya_noor')
+
+2. INSERT into submissiondataindividual (SELECT name, username, "NA" as submissionlink, festID, aadhaar from `users` where username in (SELECT username from scores where eventID like 'nritya_noor' and username not in (SELECT username FROM `submissiondata` where eventID like 'nritya_noor')))
+
+
+
+team events
+for submitted students - clear submissiondata table
+1. SELECT distinct a.name, b.username, c.team_name, a.festID, a.aadhaar, e.submissionLink from users a, scores b, team_creation_logs c, team_members d, submissionlinks e where a.username = b.username and b.eventID = 'b_roll' and c.teamID = d.teamID and d.request = 'yes' and ((c.createdBy = b.username) or (d.username = b.username)) and (c.teamID = e.username and c.eventID = 'b_roll') order by team_name
+
+for not submitted students
+2. SELECT distinct a.name, b.username, c.team_name, a.festID, a.aadhaar, "NA" as submissionlink from users a, scores b, team_creation_logs c, team_members d where a.username in (SELECT username from scores where eventID like 'b_roll' and username not in (SELECT username from `submissiondata`)) and a.username = b.username and b.eventID = 'b_roll' and c.teamID = d.teamID and d.request = 'yes' and ((c.createdBy = b.username) or (d.username = b.username)) and c.eventID = 'b_roll' order by team_name
+
+
+
+
+
+
+SELECT a.event_id, b.name, a.position, b.aadhaar from result_sheet a, users b where a.event_id in (SELECT eventID from `events` where eventtype like 'individual') and a.username = b.username
